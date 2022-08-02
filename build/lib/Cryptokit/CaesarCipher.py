@@ -23,7 +23,7 @@ def c_encipher(plain_text, key, file_mode=False):
 	try:
 		assert type(key) == type(int())
 	except AssertionError as e:
-		print("Entered key must be a an integer and a string: %s" % str(e))
+		print(f"Entered key must be a an integer and a string: {str(e)}")
 
 	try:
 		assert key > 0 and key < 27
@@ -61,11 +61,10 @@ def c_encipher(plain_text, key, file_mode=False):
 
 	answer = input("Write data to file? [y], [n]\n")
 
-	if answer.lower() in ["yes", "y"]:
-		with open("enciphered_caesar.txt", 'w') as data:
-			data.write("".join(translated))
-			return "".join(translated)
-	else:
+	if answer.lower() not in ["yes", "y"]:
+		return "".join(translated)
+	with open("enciphered_caesar.txt", 'w') as data:
+		data.write("".join(translated))
 		return "".join(translated)
 
 def c_decipher(cypher_text, key, file_mode=False):
@@ -75,7 +74,7 @@ def c_decipher(cypher_text, key, file_mode=False):
 	try:
 		assert type(key) == type(int())
 	except AssertionError as e:
-		print("Entered key must be a an integer and a string: %s" % str(e))
+		print(f"Entered key must be a an integer and a string: {str(e)}")
 
 	try:
 		assert 0 < key < 27
@@ -113,11 +112,10 @@ def c_decipher(cypher_text, key, file_mode=False):
 			translated.append(ch)
 
 	answer = input("Write data to file? [y], [n]\n")
-	if answer.lower() in ["yes", "y"]:
-		with open("deciphered_caesar.txt", 'w') as data:
-			data.write("".join(translated))
-			return "".join(translated)
-	else:
+	if answer.lower() not in ["yes", "y"]:
+		return "".join(translated)
+	with open("deciphered_caesar.txt", 'w') as data:
+		data.write("".join(translated))
 		return "".join(translated)
 
 def brute_force_decrypt(cypher_text, file_mode=False):
@@ -154,4 +152,4 @@ def brute_force_decrypt(cypher_text, file_mode=False):
 				translated.append(ch)
 
 		if detectEnglish.isEnglish("".join(translated)):
-			return "Key: %s String: %s" % (abs(key), "".join(translated))
+			return f'Key: {abs(key)} String: {"".join(translated)}'

@@ -46,21 +46,18 @@ def _read_in_chunks(file_object, chunk_size=1024):
     """Lazy function (generator) to read a file piece by piece.
     Default chunk size: 1k."""
     while True:
-        data = file_object.read(chunk_size)
-        if not data:
+        if data := file_object.read(chunk_size):
+            yield data
+        else:
             break
-        yield data
 
 def _key_generator(time):
     """Generates a random list that is equal to
     the length of the provided string."""
     print("Generating Key Please Wait...")
     filename = "_".join(["key", time])
-    key_list = []
-    for i in range(32):
-        key_list.append(choice(ascii_letters))
-
-    with open(filename + ".dat", 'w') as data:
+    key_list = [choice(ascii_letters) for _ in range(32)]
+    with open(f"{filename}.dat", 'w') as data:
         data.write("".join(key_list))
     return _string_converter("".join(key_list))
 
@@ -70,18 +67,18 @@ def _encrypt_key_file(zip_password, time):
     and search for the module or google it."""
 
     filename = "_".join(["key", time])
-    compress(filename + ".dat", filename + ".zip", zip_password, int(9))
-    remove(filename + ".dat")
+    compress(f"{filename}.dat", f"{filename}.zip", zip_password, 9)
+    remove(f"{filename}.dat")
 
 def _unzip_file(zip_file, zip_password):
     """Unzips key.zip file using a supplied password."""
 
     if version_info >= (3, 0):
         ZipFile(zip_file).extractall(pwd=str.encode(zip_password))
-        print("File unzipped.")
     else:
         ZipFile(zip_file).extractall(pwd=zip_password)
-        print("File unzipped.")
+
+    print("File unzipped.")
 
 def decrypt_data(encrypted_string, key, string_file_mode=False, key_file_mode=False):
     """Method that takes either the key or the encrypted string as a
@@ -95,7 +92,7 @@ def decrypt_data(encrypted_string, key, string_file_mode=False, key_file_mode=Fa
         if ".zip" in key:
             zf = ZipFile(key)
             try:
-                if zf.testzip() == None:
+                if zf.testzip() is None:
                     ZipFile(key).extractall()
                     print("Successfully extracted, please use the key file \
                         with the .dat extension file as your key and try again.\n")
@@ -111,13 +108,10 @@ def decrypt_data(encrypted_string, key, string_file_mode=False, key_file_mode=Fa
     else:
         my_key = key
 
+    my_string = encrypted_string
     if string_file_mode:
-        my_string = encrypted_string
         with open(my_string, 'r') as string_data:
             my_string = string_data.read()
-    else:
-        my_string = encrypted_string
-
     my_string_num_list = my_string
     my_key_num_list = _string_converter(my_key)[2:]
 
@@ -163,7 +157,7 @@ def encrypt_data(plain_text, string_file_mode=False):
         index = j % len(key_list)
         encrypted_list.append(int(string_list[j]) ^ int(key_list[index]))
 
-    with open(filename + ".txt", 'w') as message:
+    with open(f"{filename}.txt", 'w') as message:
         message.write( "0b" + "".join((str(i) for i in encrypted_list)))
 
     #_encrypt_key_file(input("Please type in a password to zip and encrypt the key.dat file.\n"), timestamp)

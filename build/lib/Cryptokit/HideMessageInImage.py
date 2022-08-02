@@ -32,14 +32,12 @@ def hide_or_show_message():
 
         if ".png" in filename:
             filename = filename.replace(".png", "")
-        im.save(filename + ".png", format("PNG"))
+        im.save(f"{filename}.png", format("PNG"))
 
     elif answer == "Decrypt":
         image_file = fileopenbox("Please pick an image file that you would like to decrypt.", filetypes=["*.png"])
         my_image = Image.open(image_file)
         pix = my_image.getdata()
 
-        for i in list(pix):
-            temp_data.append(i)
-
+        temp_data.extend(iter(list(pix)))
     return msgbox("".join([chr(i) for i in temp_data]))

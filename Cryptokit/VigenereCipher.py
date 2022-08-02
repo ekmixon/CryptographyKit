@@ -26,10 +26,7 @@ def _key_gen(plain_text, key):
 
 	for i in range(key_length):
 		index = i % len(key)
-		for k, v in key_mapper.items():
-			if key[index] in v:
-				key_string.append(k)
-
+		key_string.extend(k for k, v in key_mapper.items() if key[index] in v)
 	return key_string
 
 def v_encipher(plain_text, key, file_mode=False):
@@ -130,10 +127,7 @@ def v_dictionaryattack(cipher_text, dictionary_file="helper_files/dictionary.txt
 			key_string = []
 			for i in range(len(cipher_text)):
 				index = i % len(word)
-				for k, v in key_mapper.items():
-					if word[index] in v:
-						key_string.append(k)
-
+				key_string.extend(k for k, v in key_mapper.items() if word[index] in v)
 			deciphered_string = []
 			for element in range(len(cipher_text)):
 				if cipher_text[element].isalpha():
@@ -158,7 +152,7 @@ def v_dictionaryattack(cipher_text, dictionary_file="helper_files/dictionary.txt
 
 
 			if isEnglish("".join(deciphered_string), word_percentage=percent_match):
-				return "Possible Match! --> Key: %s String: %s" % (word, "".join(deciphered_string))
+				return f'Possible Match! --> Key: {word} String: {"".join(deciphered_string)}'
 
 	return "Message could not be deciphered, the key was not in the provided dictionary \
 	or try reducing the word_percentage match value, the default is 55 percent."
